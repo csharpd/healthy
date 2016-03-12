@@ -44,9 +44,9 @@ function formatDate(start, end) {
 }
 
 
-function getTomorrowsSchedule(genre) {
+function getTomorrowsSchedule(genre, formatedLocation) {
   $.ajax({
-    url: "https://api.foursquare.com/v2/venues/explore?client_id=YQ3TW4N1D2L5I4X2GR5W53AJNQJY5OD02IWWO5XD3LLDH0IJ&client_secret=EPVJCXN4CJO2CRU02WY5A3IUQ1T0SNHVIHV01JRYCQ4IKYLY&v=20140806&query="+genre+"&radius=1000&near=King%27s%20Cross%2C%20London%2C%20Greater%20London&nearGeoId=4006723",
+    url: "https://api.foursquare.com/v2/venues/explore?client_id=YQ3TW4N1D2L5I4X2GR5W53AJNQJY5OD02IWWO5XD3LLDH0IJ&client_secret=EPVJCXN4CJO2CRU02WY5A3IUQ1T0SNHVIHV01JRYCQ4IKYLY&v=20140806&query="+genre+"&radius=1000&near="+formatedLocation+"%2C%20London%2C%20Greater%20London",
     dataType: 'json',
     beforeSend: function () {
       $("#programmes").empty();
@@ -75,23 +75,23 @@ function getTomorrowsSchedule(genre) {
   });
 }
 
-function getUpcomingEpisodes(pid) {
-  $.ajax({
-    url: "http://www.bbc.co.uk/programmes/" + pid + "/episodes/upcoming.json",
-    beforeSend: function() {
-      $("#programmes").empty();
-      $("#programmes").append("<div class='spinner'><img src='spinner.gif' /></div>");
-    }
-  }).done(function(data) {
-    $(".spinner").remove();
-
-    $.each(data.broadcasts, function(index, episode) {
-      $("#programmes").append(processEpisode(episode));
-    })
-  }).fail(function() {
-    console.log("something went wrong");
-  });
-}
+//function getUpcomingEpisodes(pid) {
+//  $.ajax({
+//    url: "http://www.bbc.co.uk/programmes/" + pid + "/episodes/upcoming.json",
+//    beforeSend: function() {
+//      $("#programmes").empty();
+//      $("#programmes").append("<div class='spinner'><img src='spinner.gif' /></div>");
+//    }
+//  }).done(function(data) {
+//    $(".spinner").remove();
+//
+//    $.each(data.broadcasts, function(index, episode) {
+//      $("#programmes").append(processEpisode(episode));
+//    })
+//  }).fail(function() {
+//    console.log("something went wrong");
+//  });
+//}
 
 function processEpisode(item) {
   item_html = "<li><h2>" + item.venue.name + "</h2>";
@@ -147,6 +147,7 @@ function showStepTwo(place) {
 
 $(document).ready(function () {
   $('#genres .option').hide();
+  place = '';
   $(document).on('keypress', '#username', function (e) {
     if (e.which == 13) {
       place = $(this).val();
@@ -155,6 +156,7 @@ $(document).ready(function () {
       //response = getPlaceCoordinates(place);
       if (true) {
         showStepTwo(place);
+        return place;
       } else {
         noSuchPlace(place)
       }
@@ -172,8 +174,10 @@ $(document).ready(function () {
     genre = $(this).attr('id');
     $("#genres li").removeClass('active');
     $(this).addClass('active');
+    //var formatedLocation = formatLocation(place);
+    var formatedLocation = "King%27s%20Cross";
 
-    getTomorrowsSchedule(genre);
+    getTomorrowsSchedule(genre, formatedLocation);
   });
 
 });
