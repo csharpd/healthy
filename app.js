@@ -1,0 +1,4 @@
+// Setup healthyChow
+healthyChow.addClientId('YQ3TW4N1D2L5I4X2GR5W53AJNQJY5OD02IWWO5XD3LLDH0IJ');
+healthyChow.addClientSecret('EPVJCXN4CJO2CRU02WY5A3IUQ1T0SNHVIHV01JRYCQ4IKYLY');
+feedme.addFoursquareApiVersion(20140806);

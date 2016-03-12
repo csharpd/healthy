@@ -1,3 +1,28 @@
+//function getVenues(option) {
+//    $.ajax({
+//        url: 'https://api.foursquare.com/v2/venues/explore?client_id=YQ3TW4N1D2L5I4X2GR5W53AJNQJY5OD02IWWO5XD3LLDH0IJ&client_secret=EPVJCXN4CJO2CRU02WY5A3IUQ1T0SNHVIHV01JRYCQ4IKYLY&v=20140806&guery='+option+'&radius=1000&near=King%27s%20Cross%2C%20London%2C%20Greater%20London&nearGeoId=4006723',
+//        dataType: 'json',
+//        beforeSend: function () {
+//            $("#venues").empty();
+//            $("#venues").append("<div class='spinner'><img src='spinner.gif' /></div>");
+//        }
+//    }).done(function (data) {
+//        $(".spinner").remove();
+//        console.log(data);
+//    }).fail(function () {
+//        console.log("something went wrong");
+//    })
+//};
+//
+//$(document).ready(function(){
+//    $(document).on('click', '#options li', function(e){
+//        var option = $(this).attr('id');
+//        console.log(option);
+//        $().removeClass('active');
+//        $(this).addClass('active');
+//    })
+//});
+
 function formatDate(start, end) {
   start_date = new Date(start);
   end_date = new Date(end);
@@ -18,29 +43,17 @@ function formatDate(start, end) {
   return date;
 }
 
-//function getGenres() {
-//  $.ajax({
-//    url: "http://www.bbc.co.uk/tv/programmes/genres.json"
-//  }).done(function(data) {
-//    $.each(data.categories, function(index, item) {
-//      $('#genres').append("<li id='"+ item.key +"'>" + item.title + "</li>");
-//    })
-//  }).fail(function() {
-//    console.log("something went wrong");
-//  });
-//}
 
-function getTomorrowsSchedule(option) {
+function getTomorrowsSchedule(genre) {
   $.ajax({
-    url: "https://foursquare.com/explore?mode=url&near=Old%20Street%2C%20Greater%20London%2C%20United%20Kingdom&nearGeoId=72057594044618530&q="+option+"",
+    url: 'https://api.foursquare.com/v2/venues/explore?client_id=YQ3TW4N1D2L5I4X2GR5W53AJNQJY5OD02IWWO5XD3LLDH0IJ&client_secret=EPVJCXN4CJO2CRU02WY5A3IUQ1T0SNHVIHV01JRYCQ4IKYLY&v=20140806&guery=pizza&radius=1000&near=King%27s%20Cross%2C%20London%2C%20Greater%20London&nearGeoId=4006723',
     dataType: 'json',
-    beforeSend: function() {
+    beforeSend: function () {
       $("#programmes").empty();
       $("#programmes").append("<div class='spinner'><img src='spinner.gif' /></div>");
     }
   }).done(function(data) {
     $(".spinner").remove();
-    console.log(data);
     //if (data.broadcasts.length > 0) {
     //  $.each(data.broadcasts, function(index, episode) {
     //    console.log(episode, episode.programme.display_titles.title);
@@ -49,6 +62,15 @@ function getTomorrowsSchedule(option) {
     //} else {
     //  $("#programmes").append("<div class='no-programmes'>No programmes under " + genre + "</div>");
     //}
+    console.log(data);
+    if (data.response.groups.length > 0) {
+      $.each(data.response.groups[0].items, function(index, item) {
+        console.log(item, item.venue.name);
+        $("#programmes").append(processEpisode(item));
+      })
+    } else {
+      $("#programmes").append("<div class='no-programmes'>No programmes under " + genre + "</div>");
+    }
   }).fail(function() {
     console.log("something went wrong");
   });
@@ -72,25 +94,36 @@ function getUpcomingEpisodes(pid) {
   });
 }
 
-function processEpisode(episode) {
-  item_html = "<li><h2>" + episode.programme.display_titles.title + "</h2>";
-  item_html += "<h3>" + episode.programme.short_synopsis + "</h3>";
-
-  if (episode.programme.image) {
-    item_html += "<img src=http://ichef.bbci.co.uk/images/ic/272x153/"+ episode.programme.image.pid +".jpg />";
-  } else {
-    item_html += "<img src='http://placehold.it/272x153' />";
+function processEpisode(item) {
+  item_html = "<li><h2>" + item.venue.name + "</h2>";
+  if (item.venue.url) {
+    item_html += "<h3>" + item.venue.url + "</h3>";
   }
 
-  item_html += "<p>" + formatDate(episode.start, episode.end)+ "</p>";
-  item_html += "<p> <strong>Duration: </strong>" + episode.duration/60 + " minutes</p>";
-
-  if (episode.programme.position) {
-    pid = episode.programme.programme.pid;
-    item_html += "<a class='view-more' id=" + pid +" href='#'> View all upcoming " + episode.programme.display_titles.title + "</a>";
+  //
+  //if (episode.programme.image) {
+  //  item_html += "<img src=http://ichef.bbci.co.uk/images/ic/272x153/"+ episode.programme.image.pid +".jpg />";
+  //} else {
+  //  item_html += "<img src='http://placehold.it/272x153' />";
+  //}
+  //
+  if (item.venue.hours && item.venue.hours.status) {
+    item_html += "<p>" + item.venue.hours.status + "</p>";
   }
 
-  item_html += "<span class='service'>" + episode.service.title + "</span></li>";
+  if (item.venue.rating) {
+    item_html += "<p>Rated: <strong>" + item.venue.rating + "</strong></p>";
+  }
+
+  if (item.venue.price && item.venue.price.message) {
+    item_html += "<p>Price: <strong>" + item.venue.price.message + "</strong></p>";
+  }
+
+  if (item.venue.menu && item.venue.menu.url) {
+    item_html += "<a class='view-more' href='"+ item.venue.menu.url+"'> Menu</a>";
+  }
+
+  //item_html += "<span class='service'>" + episode.service.title + "</span></li>";
 
   return item_html;
 }
@@ -98,20 +131,11 @@ function processEpisode(episode) {
 
 $(document).ready(function(){
   $(document).on('click', '#genres li', function(e){
-    option = $(this).attr('id');
-    $("#options li").removeClass('active');
+    genre = $(this).attr('id');
+    $("#genres li").removeClass('active');
     $(this).addClass('active');
 
-    getTomorrowsSchedule(option);
+    getTomorrowsSchedule(genre);
   });
 
-  //$(document).on('click', '.view-more', function(e){
-  //  pid = $(this).attr('id');
-  //
-  //  getUpcomingEpisodes(pid);
-  //})
-  //
-  //getGenres();
 });
-
-//https://foursquare.com/explore?mode=url&near=Old%20Street%2C%20Greater%20London%2C%20United%20Kingdom&nearGeoId=72057594044618530&q=coffee
