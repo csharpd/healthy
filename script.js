@@ -46,7 +46,7 @@ function formatDate(start, end) {
 
 function getTomorrowsSchedule(genre) {
   $.ajax({
-    url: 'https://api.foursquare.com/v2/venues/explore?client_id=YQ3TW4N1D2L5I4X2GR5W53AJNQJY5OD02IWWO5XD3LLDH0IJ&client_secret=EPVJCXN4CJO2CRU02WY5A3IUQ1T0SNHVIHV01JRYCQ4IKYLY&v=20140806&guery=pizza&radius=1000&near=King%27s%20Cross%2C%20London%2C%20Greater%20London&nearGeoId=4006723',
+    url: "https://api.foursquare.com/v2/venues/explore?client_id=YQ3TW4N1D2L5I4X2GR5W53AJNQJY5OD02IWWO5XD3LLDH0IJ&client_secret=EPVJCXN4CJO2CRU02WY5A3IUQ1T0SNHVIHV01JRYCQ4IKYLY&v=20140806&query="+genre+"&radius=1000&near=King%27s%20Cross%2C%20London%2C%20Greater%20London&nearGeoId=4006723",
     dataType: 'json',
     beforeSend: function () {
       $("#programmes").empty();
@@ -62,7 +62,6 @@ function getTomorrowsSchedule(genre) {
     //} else {
     //  $("#programmes").append("<div class='no-programmes'>No programmes under " + genre + "</div>");
     //}
-    console.log(data);
     if (data.response.groups.length > 0) {
       $.each(data.response.groups[0].items, function(index, item) {
         console.log(item, item.venue.name);
@@ -96,9 +95,6 @@ function getUpcomingEpisodes(pid) {
 
 function processEpisode(item) {
   item_html = "<li><h2>" + item.venue.name + "</h2>";
-  if (item.venue.url) {
-    item_html += "<h3>" + item.venue.url + "</h3>";
-  }
 
   //
   //if (episode.programme.image) {
@@ -107,20 +103,25 @@ function processEpisode(item) {
   //  item_html += "<img src='http://placehold.it/272x153' />";
   //}
   //
+
+  if (item.venue.rating) {
+    item_html += "<p><span class='service'>Rated</span><strong>" + item.venue.rating + "</strong></p>";
+  }
+
+  if (item.venue.price && item.venue.price.message) {
+    item_html += "<p><span class='service'>Price</span><strong>" + item.venue.price.message + "</strong></p>";
+  }
+
   if (item.venue.hours && item.venue.hours.status) {
     item_html += "<p>" + item.venue.hours.status + "</p>";
   }
 
-  if (item.venue.rating) {
-    item_html += "<p>Rated: <strong>" + item.venue.rating + "</strong></p>";
-  }
-
-  if (item.venue.price && item.venue.price.message) {
-    item_html += "<p>Price: <strong>" + item.venue.price.message + "</strong></p>";
+  if (item.venue.url) {
+    item_html += "<a href='" + item.venue.url + "'><h3>website<h3></a>";
   }
 
   if (item.venue.menu && item.venue.menu.url) {
-    item_html += "<a class='view-more' href='"+ item.venue.menu.url+"'> Menu</a>";
+    item_html += "<a class='view-more' href='"+ item.venue.menu.url+"'>menu</a></li>";
   }
 
   //item_html += "<span class='service'>" + episode.service.title + "</span></li>";
@@ -128,8 +129,45 @@ function processEpisode(item) {
   return item_html;
 }
 
+function noSuchPlace(place) {
+  $('#profile h2').html(place + " - Where even is that!? <br> Try somewhere else ");
+  $('#profile .information').hide();
+  $('#profile .avatar').hide();
+  $('#genres .option').hide();
+}
 
-$(document).ready(function(){
+function showStepTwo(place) {
+  $('#profile .information').show();
+  $('#profile .avatar').show();
+  $('#profile #place').html(place + ". We can work with that");
+  $('#profile #instructions').html("Choose something you fancy");
+  $('#genres .option').show();
+}
+
+
+$(document).ready(function () {
+  $('#genres .option').hide();
+  $(document).on('keypress', '#username', function (e) {
+    if (e.which == 13) {
+      place = $(this).val();
+      $(this).val("");
+      console.log(place);
+      //response = getPlaceCoordinates(place);
+      if (true) {
+        showStepTwo(place);
+      } else {
+        noSuchPlace(place)
+      }
+
+      //response = getGithubInfo(username);
+      //
+      //if (response.status == 200) {
+      //  showUser(JSON.parse(response.responseText));
+      //} else {
+      //  noSuchUser(username);
+      //}
+    }
+  });
   $(document).on('click', '#genres li', function(e){
     genre = $(this).attr('id');
     $("#genres li").removeClass('active');
