@@ -4,6 +4,9 @@
     <title>Feed Me!</title>
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="script.js"></script>
+    <!--<script async defer-->
+    <!--src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">-->
+    <!--</script>-->
   </head>
   <body>
     <header>
@@ -11,13 +14,13 @@
     </header>
     <div id="container">
       <div class="search">
-        <input id="username" placeholder="WHERE ARE YOU?" type="text"></input>
+        <input id="username" placeholder="WHERE ARE YOU IN LONDON?" type="text"></input>
       </div>
       <div id="profile">
-        <h2 id="place"></h2>
+        <h2 id="location"></h2>
         <h2 id="instructions"></h2>
       </div>
-      <ul id="genres">
+      <ul id="options">
         <li class="option" id="healthy">Healthy</li>
         <li class="option" id="vegan">Vegan</li>
         <li class="option" id="vegetarian">Vegetarian</li>
@@ -26,10 +29,11 @@
         <li class="option" id="salad">Salad</li>
         <li class="option" id="coffee">Coffee</li>
         <li class="option" id="juice">Juice</li>
-        <li class="option" id="bar">Bars</li>
+        <li class="option" id="cocktails">Liquor</li>
         <li class="option" id="bone-broth">Bone Broth</li>
+        <li class="option" id="indian">Indian</li>
       </ul>
-      <ul id="programmes">
+      <ul id="venues">
       </ul>
     </div>
     <footer>

@@ -1,99 +1,27 @@
-//function getVenues(option) {
-//    $.ajax({
-//        url: 'https://api.foursquare.com/v2/venues/explore?client_id=YQ3TW4N1D2L5I4X2GR5W53AJNQJY5OD02IWWO5XD3LLDH0IJ&client_secret=EPVJCXN4CJO2CRU02WY5A3IUQ1T0SNHVIHV01JRYCQ4IKYLY&v=20140806&guery='+option+'&radius=1000&near=King%27s%20Cross%2C%20London%2C%20Greater%20London&nearGeoId=4006723',
-//        dataType: 'json',
-//        beforeSend: function () {
-//            $("#venues").empty();
-//            $("#venues").append("<div class='spinner'><img src='spinner.gif' /></div>");
-//        }
-//    }).done(function (data) {
-//        $(".spinner").remove();
-//        console.log(data);
-//    }).fail(function () {
-//        console.log("something went wrong");
-//    })
-//};
-//
-//$(document).ready(function(){
-//    $(document).on('click', '#options li', function(e){
-//        var option = $(this).attr('id');
-//        console.log(option);
-//        $().removeClass('active');
-//        $(this).addClass('active');
-//    })
-//});
-
-function formatDate(start, end) {
-  start_date = new Date(start);
-  end_date = new Date(end);
-
-  day = start_date.getDate();
-  month = start_date.getMonth() + 1;
-  year = start_date.getFullYear();
-
-  start_hour = start_date.getHours();
-  start_mins = start_date.getMinutes();
-
-  end_hour = end_date.getHours();
-  end_mins = end_date.getMinutes();
-
-  date = day + "/" + month + "/" + year + " ";
-  date +=  ("0"+start_hour).slice(-2) + ":" + ("0"+start_mins).slice(-2) + " - " +
-           ('0' + end_hour).slice(-2) + ":" +  ( "0" + end_mins).slice(-2);
-  return date;
-}
-
-
-function getTomorrowsSchedule(genre, formatedLocation) {
+function getVenues(option, formatedLocation) {
   $.ajax({
-    url: "https://api.foursquare.com/v2/venues/explore?client_id=YQ3TW4N1D2L5I4X2GR5W53AJNQJY5OD02IWWO5XD3LLDH0IJ&client_secret=EPVJCXN4CJO2CRU02WY5A3IUQ1T0SNHVIHV01JRYCQ4IKYLY&v=20140806&query="+genre+"&radius=1000&near="+formatedLocation+"%2C%20London%2C%20Greater%20London",
+    url: "https://api.foursquare.com/v2/venues/explore?client_id=YQ3TW4N1D2L5I4X2GR5W53AJNQJY5OD02IWWO5XD3LLDH0IJ&client_secret=EPVJCXN4CJO2CRU02WY5A3IUQ1T0SNHVIHV01JRYCQ4IKYLY&v=20140806&query="+option+"&radius=1000&near="+formatedLocation+"%2C%20London%2C%20Greater%20London",
     dataType: 'json',
     beforeSend: function () {
-      $("#programmes").empty();
-      $("#programmes").append("<div class='spinner'><img src='spinner.gif' /></div>");
+      $("#venues").empty();
+      $("#venues").append("<div class='spinner'><img src='spinner.gif' /></div>");
     }
   }).done(function(data) {
     $(".spinner").remove();
-    //if (data.broadcasts.length > 0) {
-    //  $.each(data.broadcasts, function(index, episode) {
-    //    console.log(episode, episode.programme.display_titles.title);
-    //    $("#programmes").append(processEpisode(episode));
-    //  })
-    //} else {
-    //  $("#programmes").append("<div class='no-programmes'>No programmes under " + genre + "</div>");
-    //}
     if (data.response.groups.length > 0) {
       $.each(data.response.groups[0].items, function(index, item) {
         console.log(item, item.venue.name);
-        $("#programmes").append(processEpisode(item));
+        $("#venues").append(processVenue(item));
       })
     } else {
-      $("#programmes").append("<div class='no-programmes'>No programmes under " + genre + "</div>");
+      $("#venues").append("<div class='no-programmes'>No venues serving" + option + " around " + formatedLocation +"</div>");
     }
   }).fail(function() {
     console.log("something went wrong");
   });
 }
 
-//function getUpcomingEpisodes(pid) {
-//  $.ajax({
-//    url: "http://www.bbc.co.uk/programmes/" + pid + "/episodes/upcoming.json",
-//    beforeSend: function() {
-//      $("#programmes").empty();
-//      $("#programmes").append("<div class='spinner'><img src='spinner.gif' /></div>");
-//    }
-//  }).done(function(data) {
-//    $(".spinner").remove();
-//
-//    $.each(data.broadcasts, function(index, episode) {
-//      $("#programmes").append(processEpisode(episode));
-//    })
-//  }).fail(function() {
-//    console.log("something went wrong");
-//  });
-//}
-
-function processEpisode(item) {
+function processVenue(item) {
   item_html = "<li><h2>" + item.venue.name + "</h2>";
 
   //
@@ -124,30 +52,30 @@ function processEpisode(item) {
     item_html += "<a class='view-more' href='"+ item.venue.menu.url+"'>menu</a></li>";
   }
 
-  //item_html += "<span class='service'>" + episode.service.title + "</span></li>";
-
   return item_html;
 }
 
-function noSuchPlace(place) {
-  $('#profile h2').html(place + " - Where even is that!? <br> Try somewhere else ");
-  $('#profile .information').hide();
-  $('#profile .avatar').hide();
-  $('#genres .option').hide();
+function noSuchLocation(place) {
+  var formatedLocation = place.substr(0,1).toUpperCase()+place.substr(1);
+  $('#profile h2').html(formatedLocation + " - Where even is that!? <br> Try somewhere else ");
+  $('#options .option').hide();
 }
 
-function showStepTwo(place) {
-  $('#profile .information').show();
-  $('#profile .avatar').show();
-  $('#profile #place').html(place + ". We can work with that");
+function showOptions(place) {
+  var formatedLocation = place.substr(0,1).toUpperCase()+place.substr(1);
+  $('#profile #location').html(formatedLocation + ". We can work with that");
   $('#profile #instructions').html("Choose something you fancy");
-  $('#genres .option').show();
+  $('#options .option').show();
 }
 
+function formatLocation(str) {
+  var stringNoSpaces = str.replace(" ","%20");
+  var stringNoApostrophes = stringNoSpaces.replace("'","%27");
+  return stringNoApostrophes
+}
 
 $(document).ready(function () {
-  $('#genres .option').hide();
-  place = '';
+  $('#options .option').hide();
   $(document).on('keypress', '#username', function (e) {
     if (e.which == 13) {
       place = $(this).val();
@@ -155,10 +83,10 @@ $(document).ready(function () {
       console.log(place);
       //response = getPlaceCoordinates(place);
       if (true) {
-        showStepTwo(place);
+        showOptions(place);
         return place;
       } else {
-        noSuchPlace(place)
+        noSuchLocation(place)
       }
 
       //response = getGithubInfo(username);
@@ -170,14 +98,33 @@ $(document).ready(function () {
       //}
     }
   });
-  $(document).on('click', '#genres li', function(e){
-    genre = $(this).attr('id');
-    $("#genres li").removeClass('active');
+  $(document).on('click', '#options li', function(e){
+    option = $(this).attr('id');
+    $("#options li").removeClass('active');
     $(this).addClass('active');
-    //var formatedLocation = formatLocation(place);
-    var formatedLocation = "King%27s%20Cross";
+    console.log(place, 'PLACE');
+    var formatedLocation = formatLocation(place);
+    //var formatedLocation = "King%27s%20Cross";
 
-    getTomorrowsSchedule(genre, formatedLocation);
+    getVenues(option, formatedLocation);
   });
 
 });
+
+//function getLatLong(adress) {
+//  try{
+//    if(adress=="")return("");
+//    var geo = Maps.newGeocoder().geocode(adress);
+//    if(geo.status=="OK"){
+//      var lng = geo.results[0].geometry.viewport.southwest.lng;
+//      var lat = geo.results[0].geometry.viewport.southwest.lat;
+//      return([lat,lng]);
+//    }
+//    else{
+//      return("error");
+//    }
+//  }
+//  catch(err){
+//    return(err);
+//  }
+//}
