@@ -2,42 +2,62 @@
   <head>
     <link rel="stylesheet" href="style.css">
     <title>Feed Me!</title>
-    <script type="text/javascript" src="jquery.js"></script>
-    <script type="text/javascript" src="script.js"></script>
-    <!--<script async defer-->
-    <!--src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">-->
-    <!--</script>-->
   </head>
   <body>
-    <header>
-    <!--<img id="logo" src='https://raw.github.com/codebar/planner/master/app/assets/images/logo.png' width='200' />-->
-    </header>
-    <div id="container">
-      <div class="search">
-        <input id="username" placeholder="WHERE ARE YOU IN LONDON?" type="text"></input>
-      </div>
-      <div id="profile">
-        <h2 id="location"></h2>
-        <h2 id="instructions"></h2>
-      </div>
-      <ul id="options">
-        <li class="option" id="healthy">Healthy</li>
-        <li class="option" id="vegan">Vegan</li>
-        <li class="option" id="vegetarian">Vegetarian</li>
-        <li class="option" id="paleo">Paleo</li>
-        <li class="option" id="gluten-free">Gluten Free</li>
-        <li class="option" id="salad">Salad</li>
-        <li class="option" id="coffee">Coffee</li>
-        <li class="option" id="juice">Juice</li>
-        <li class="option" id="cocktails">Liquor</li>
-        <li class="option" id="bone-broth">Bone Broth</li>
-        <li class="option" id="indian">Indian</li>
-      </ul>
-      <ul id="venues">
-      </ul>
+
+
+    <button class="clear-button">clear</button>
+
+    <div class="container">
+      <form class="search">
+        <input class="search__input" placeholder="WHERE ARE YOU IN LONDON?" type="text"></input>
+      </form>
+      <div class="content"></div>
     </div>
-    <footer>
-    <div id="content"> by <a href="#">Chloe Donegan</a> </div>
-    </footer>
+
+    <script type="text/html" class="template">
+
+      <% if (hasLocation) { %>
+        <div class="instructions">
+          <h2 class="location"><%= location %></h2>
+          <h2>We can work with that</h2>
+          <h2>Choose an option</h2>
+        </div>
+
+        <ul class="options">
+          <% _.each(options, function(option){ %>
+            <li class="option" data-option-name="<%= option.searchTerm %>"><%= option.name %></li>
+          <% }); %>
+        </ul>
+      <% } %>
+
+      <% if (loading) { %>
+        <div class='spinner'>Loading <%= activeOption.name %>... <img src='spinner.gif' /></div>
+      <% } %>
+
+      <% if (venues) { %>
+        <ul class="venues">
+          <% _.each(venues, function(venue){ %>
+          <li>
+            <h2><%= venue.name %></h2>
+            <p><span class='service'>Rated</span><strong> <%= venue.rating %></strong></p>
+            <p><span class='service'>Price</span><strong> <%= venue.priceBracket %></strong></p>
+            <p><%= venue.openStatus %></p>
+            <a href="<%= venue.url %>"><%= venue.name %> Website</a>
+            <a class='view-more' href="<%= venue.name %>">Menu</a></li>
+          </li>
+          <% }); %>
+        </ul>
+      <% } %>
+
+    </script>
+
+
+    <script type="text/javascript" src="underscore.js"></script>
+    <script type="text/javascript" src="jquery.js"></script>
+    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAotvXSitO9XB3tAl-1lX7eIgLw_oaOjEo&callback=initMap"-->
+            <!--async defer></script>-->
+
+    <script type="text/javascript" src="script.js"></script>
   </body>
 </html>
