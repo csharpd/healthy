@@ -63,7 +63,7 @@ li {
   border-radius: 5px;
 }
 
-.chow__options li.active {
+.chow__option .active {
   background-color: purple;
 }
 
