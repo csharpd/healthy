@@ -11,17 +11,17 @@ var initialState = {
   activeOption: null,
 
   options: [
-    { searchTerm: 'healthy', name: 'Healthy'},
-    { searchTerm: 'vegan', name: 'Vegan'},
-    { searchTerm: 'vegetarian', name: 'Vegetarian'},
-    { searchTerm: 'paleo', name: 'Paleo'},
-    { searchTerm: 'gluten free', name: 'Gluten Free'},
-    { searchTerm: 'salad', name: 'Salad'},
-    { searchTerm: 'coffee', name: 'Coffee'},
-    { searchTerm: 'juice', name: 'Juice'},
-    { searchTerm: 'cocktails', name: 'Liquor'},
-    { searchTerm: 'bone broth', name: 'Bone Broth'},
-    { searchTerm: 'indian', name: 'Indian'}
+    { active: false, searchTerm: 'healthy', name: 'Healthy'},
+    { active: false, searchTerm: 'vegan', name: 'Vegan'},
+    { active: false, searchTerm: 'vegetarian', name: 'Vegetarian'},
+    { active: false, searchTerm: 'paleo', name: 'Paleo'},
+    { active: false, searchTerm: 'gluten free', name: 'Gluten Free'},
+    { active: false, searchTerm: 'salad', name: 'Salad'},
+    { active: false, searchTerm: 'coffee', name: 'Coffee'},
+    { active: false, searchTerm: 'juice', name: 'Juice'},
+    { active: false, searchTerm: 'cocktails', name: 'Liquor'},
+    { active: false, searchTerm: 'bone broth', name: 'Bone Broth'},
+    { active: false, searchTerm: 'indian', name: 'Indian'}
   ],
 
   loading: false,
@@ -39,6 +39,32 @@ function setState(newState) {
 function render() {
   document.querySelector('.chow__content').innerHTML = template(state);
   bindEvents();
+  onAfterRender();
+}
+
+function onAfterRender() {
+
+  var maps = document.querySelectorAll('.chow__map');
+
+  _.each(maps, function(map) {
+
+      var lat = parseFloat(map.getAttribute('data-lat'), 10);
+      var lng = parseFloat(map.getAttribute('data-lng'), 10);
+
+      var pos = {lat: lat, lng: lng};
+
+      var mapInstance = new google.maps.Map(map, {
+        center: pos,
+        zoom: 16
+      });
+
+      var marker = new google.maps.Marker({
+        position: pos,
+        map: mapInstance,
+        title: 'Hello World!'
+      });
+  });
+
 }
 
 function bindEvents() {
@@ -48,15 +74,24 @@ function bindEvents() {
 
     option.addEventListener('click', function(event) {
       var searchTerm = this.getAttribute('data-option-name');
+      var activeOption;
 
-      var activeOption = _.find(state.options, function (option) {
-        return option.searchTerm === searchTerm;
+      var options = _.map(state.options, function(opt) {
+
+        var option = _.clone(opt);
+
+        if (option.searchTerm === searchTerm) {
+          option.active = true;
+          activeOption = option;
+        }
+        else {
+          option.active = false;
+        }
+        return option;
+
       });
 
-      console.log(this);
-      this.classList.add('active');
-
-      setState({activeOption: activeOption});
+      setState({activeOption: activeOption, options: options});
       getVenues();
     });
 
@@ -116,6 +151,9 @@ function getVenues() {
               venue.menu = responseVenue.venue.menu.url;
             }
 
+            // TODO Check shit.
+            venue.lat = responseVenue.venue.location.lat;
+            venue.lng = responseVenue.venue.location.lng;
             venues.push(venue);
 
           });
@@ -130,7 +168,8 @@ function getVenues() {
           venues: sortedVenues
         });
 
-  }).catch(function() {
+  }).catch(function(error) {
+    console.log(error);
     console.log("something went wrong");
   });
 }
@@ -144,6 +183,12 @@ document.querySelector('.chow__search').addEventListener('submit', function(even
   event.preventDefault();
   var location = this.querySelector('.chow__search-input').value;
   console.log(location);
+
+  if (!location.length) {
+    return;
+  }
+
+  setState(initialState);
 
   setState({
     location: location,
