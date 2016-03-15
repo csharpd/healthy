@@ -37,7 +37,7 @@ function setState(newState) {
 }
 
 function render() {
-  $('.content').html(template(state));
+  $('.chow__content').html(template(state));
 }
 
 function getVenues() {
@@ -66,6 +66,10 @@ function getVenues() {
 
       _.each(responseVenues, function (responseVenue) {
 
+        if (!responseVenue.venue.price || !responseVenue.venue.rating) {
+          return;
+        }
+
         var priceBracket = '';
         if (responseVenue.venue.price && responseVenue.venue.price.message) {
           priceBracket = responseVenue.venue.price.message;
@@ -93,9 +97,13 @@ function getVenues() {
       });
     }
 
+    var sortedVenues = venues.sort(function(a, b) {
+      return b.rating - a.rating;
+    });
+
     setState({
       loading: false,
-      venues: venues
+      venues: sortedVenues
     });
 
   }).fail(function() {
@@ -104,18 +112,21 @@ function getVenues() {
 }
 
 
-$(document).on('submit', '.search', function (event) {
-    event.preventDefault();
-    var location = $(this).find('.search__input').val();
+$(document).on('submit', '.chow__search', function (event) {
+  event.preventDefault();
+  var location = $(this).find('.chow__search-input').val();
+  console.log(location);
 
   setState({
-      location: location,
-      hasLocation: true
-    });
+    location: location,
+    hasLocation: true
+  });
+
+  console.log(state);
 });
 
 
-$(document).on('click', '.options li', function(e) {
+$(document).on('click', '.chow__options li', function(e) {
   var searchTerm = $(this).data('option-name');
 
   var activeOption = _.find(state.options, function(option) {
@@ -127,7 +138,7 @@ $(document).on('click', '.options li', function(e) {
 });
 
 
-$(document).on('click', '.clear-button', function(e) {
+$(document).on('click', '.chow__clear-button', function(e) {
   setState(initialState);
 });
 

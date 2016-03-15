@@ -13,35 +13,6 @@ header {
   border-bottom: 1px solid #e5e2e0;
 }
 
-.logo {
-  position: relative;
-  top: -2px;
-}
-
-.container {
-  width: 1040px;
-  margin: 0px auto;
-  min-height: 750px;
-}
-
-input[type='text'] {
-  height: 2.2em;
-  font-size: 2em;
-  width: 400px;
-  padding: 5px;
-}
-
-.information, .avatar {
-  vertical-align: top;
-  display: inline-block;
-  width: 40%;
-}
-
-.search {
-  text-align: center;
-  margin: 50px auto;
-}
-
 h2 {
   color: #A26CD2;
 }
@@ -56,7 +27,35 @@ li {
   display: inline-block;
 }
 
-.options li {
+.chow {
+  width: 1040px;
+  margin: 0px auto;
+  min-height: 750px;
+}
+
+.chow__search-input {
+  height: 2.2em;
+  font-size: 2em;
+  width: 400px;
+  padding: 5px;
+}
+
+.chow__search {
+  text-align: center;
+  margin: 50px auto;
+}
+
+.chow__spinner {
+  width: 100%;
+  margin-top: 200px;
+  text-align: center;
+}
+
+.chow__location {
+  text-transform: capitalize;
+}
+
+.chow__options li {
   padding: 10px;
   margin: 5px;
   background-color: #5E5A6B;
@@ -64,11 +63,11 @@ li {
   border-radius: 5px;
 }
 
-.options li.active {
+.chow__options li.active {
   background-color: purple;
 }
 
-.venues li {
+.chow__venues li {
   width: 45%;
   margin: 10px;
   padding: 10px;
@@ -78,58 +77,10 @@ li {
   vertical-align: top;
 }
 
-.service {
+.chow__info {
   background-color: #A26CD2;
   padding: 5px;
   /*float: right;*/
   border-radius: 5px;
   color: black;
-}
-
-.spinner {
-  width: 100%;
-  margin-top: 200px;
-  text-align: center;
-}
-
-.no-programmes {
-  margin-top: 100px;
-  text-align: center;
-}
-
-footer {
-  padding-bottom: 10px;
-  border-bottom: 5px solid #4c4066;
-  position: absolute;
-  width: 100%;
-}
-
-footer #content {
-  width: 1040px;
-  margin: 0px auto;
-}
-
-input[type='text'] {
-  height: 2.2em;
-  font-size: 2em;
-  width: 50%;
-  padding: 5px;
-}
-
-.search {
-  text-align: center;
-  margin: 50px auto;
-}
-
-.map {
-  width: 70%;
-  height: 500px;
-  margin: 0 auto;
-  -moz-box-shadow: 0px 5px 20px #ccc;
-  -webkit-box-shadow: 0px 5px 20px #ccc;
-  box-shadow: 0px 5px 20px #ccc;
-}
-
-.location {
-  text-transform: capitalize;
 }

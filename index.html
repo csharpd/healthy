@@ -4,44 +4,41 @@
     <title>Feed Me!</title>
   </head>
   <body>
-
-
-    <button class="clear-button">clear</button>
-
-    <div class="container">
-      <form class="search">
-        <input class="search__input" placeholder="WHERE ARE YOU IN LONDON?" type="text"></input>
+    <div class="chow">
+      <button class="chow__clear-button">clear</button>
+      <form class="chow__search">
+        <input class="chow__search-input" placeholder="WHERE ARE YOU IN LONDON?" type="text"></input>
       </form>
-      <div class="content"></div>
+      <div class="chow__content"></div>
     </div>
 
     <script type="text/html" class="template">
 
       <% if (hasLocation) { %>
-        <div class="instructions">
-          <h2 class="location"><%= location %></h2>
+        <div class="chow__instructions">
+          <h2 class="chow__location"><%= location %>, London, England.</h2>
           <h2>We can work with that</h2>
           <h2>Choose an option</h2>
         </div>
 
-        <ul class="options">
+        <ul class="chow__options">
           <% _.each(options, function(option){ %>
-            <li class="option" data-option-name="<%= option.searchTerm %>"><%= option.name %></li>
+            <li class="chow__option" data-option-name="<%= option.searchTerm %>"><%= option.name %></li>
           <% }); %>
         </ul>
       <% } %>
 
       <% if (loading) { %>
-        <div class='spinner'>Loading <%= activeOption.name %>... <img src='spinner.gif' /></div>
+        <div class='chow__spinner'>Loading <%= activeOption.name %>... <img src='spinner.gif' /></div>
       <% } %>
 
       <% if (venues) { %>
-        <ul class="venues">
+        <ul class="chow__venues">
           <% _.each(venues, function(venue){ %>
           <li>
             <h2><%= venue.name %></h2>
-            <p><span class='service'>Rated</span><strong> <%= venue.rating %></strong></p>
-            <p><span class='service'>Price</span><strong> <%= venue.priceBracket %></strong></p>
+            <p><span class='chow__info'>Rated</span><strong> <%= venue.rating %></strong></p>
+            <p><span class='chow__info'>Price</span><strong> <%= venue.priceBracket %></strong></p>
             <p><%= venue.openStatus %></p>
             <a href="<%= venue.url %>"><%= venue.name %> Website</a>
             <a class='view-more' href="<%= venue.name %>">Menu</a></li>
@@ -52,12 +49,10 @@
 
     </script>
 
-
     <script type="text/javascript" src="underscore.js"></script>
     <script type="text/javascript" src="jquery.js"></script>
     <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAotvXSitO9XB3tAl-1lX7eIgLw_oaOjEo&callback=initMap"-->
             <!--async defer></script>-->
-
     <script type="text/javascript" src="script.js"></script>
   </body>
 </html>
